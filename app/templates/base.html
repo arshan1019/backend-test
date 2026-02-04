@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Board</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <style>
+        .featured-sidebar { border-left: 1px solid #e1e1e1; padding-left: 20px; }
+        .event-card { margin-bottom: 2rem; border-bottom: 1px solid #eee; padding-bottom: 1rem; }
+        nav { margin-bottom: 2rem; }
+    </style>
+</head>
+<body>
+    <nav class="container-fluid">
+        <ul>
+            <li><strong><a href="/">📅 EventBoard</a></strong></li>
+        </ul>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/dashboard">Backend Dashboard</a></li>
+            {% if user %}
+                <li><a href="/logout" class="secondary">Logout ({{ user.username }})</a></li>
+            {% else %}
+                <li><a href="/login" class="outline">Login</a></li>
+             <li><a href="/register" class="outline">Register</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="grid">
+    <!-- Main Event List -->
+    <section>
+        <h2>Upcoming Events</h2>
+        {% for event in events %}
+        <article class="event-card">
+            <header>
+                <strong>{{ event.date.strftime('%b %d, %Y') }}</strong>
+            </header>
+            <h3>{{ event.name }}</h3>
+            <p>{{ event.description[:150] }}...</p>
+            <footer>
+                <a href="/event/{{ event.id }}" role="button">View Details</a>
+            </footer>
+        </article>
+        {% endfor %}
+    </section>
+
+    <!-- Featured Sidebar -->
+    <aside class="featured-sidebar">
+        <h4>Featured Events</h4>
+        {% for feat in featured %}
+        <div style="margin-bottom: 1rem;">
+            <mark>{{ feat.name }}</mark><br>
+            <small>{{ feat.date.strftime('%Y-%m-%d') }}</small><br>
+            <a href="/event/{{ feat.id }}">View</a>
+        </div>
+        <hr>
+        {% endfor %}
+    </aside>
+</div>
+{% endblock %}

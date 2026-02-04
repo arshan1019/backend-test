@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<nav aria-label="breadcrumb">
+  <ul>
+    <li><a href="/">Home</a></li>
+    <li>{{ event.name }}</li>
+  </ul>
+</nav>
+
+<article>
+    <header>
+        <h1>{{ event.name }}</h1>
+        <p><strong>Location:</strong> {{ event.location }} | <strong>Date:</strong> {{ event.date.strftime('%B %d, %Y at %H:%M') }}</p>
+    </header>
+
+    {% if event.image_url %}
+    <img src="{{ event.image_url }}" alt="Event Image" style="width: 100%; max-height: 400px; object-fit: cover; margin-bottom: 1rem;">
+    {% endif %}
+
+    <p>{{ event.description }}</p>
+
+    <footer>
+        <!-- Twitter Share Button -->
+        <a href="https://twitter.com/intent/tweet?text={{ share_text|urlencode }}" 
+           target="_blank" 
+           role="button" 
+           class="contrast">
+           🐦 Share on Twitter
+        </a>
+    </footer>
+</article>
+{% endblock %}

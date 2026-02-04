@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<article style="max-width: 400px; margin: auto;">
+    <header>
+        <h2>Create Account</h2>
+    </header>
+    <form action="/register" method="POST">
+        <label for="username">Choose Username</label>
+        <input type="text" id="username" name="username" placeholder="e.g. john_doe" required>
+        
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="Min. 8 characters" required>
+        
+        <button type="submit">Register</button>
+    </form>
+    <footer>
+        <small>Already have an account? <a href="/login">Login here</a></small>
+    </footer>
+</article>
+{% endblock %}

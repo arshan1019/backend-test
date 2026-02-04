@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Backend Dashboard</h1>
+
+<div class="grid">
+    <!-- Create Event Form -->
+    <section>
+        <article>
+            <h5>Create New Event</h5>
+            <form action="/events/create" method="POST">
+                <input type="text" name="name" placeholder="Event Title" required>
+                <textarea name="description" placeholder="Description" required></textarea>
+                <input type="datetime-local" name="date" required>
+                <input type="text" name="location" placeholder="Location" required>
+                <input type="url" name="image_url" placeholder="Image URL (http://...)">
+                
+                <label for="is_featured">
+                    <input type="checkbox" id="is_featured" name="is_featured" value="true">
+                    Feature this event
+                </label>
+                
+                <button type="submit">Publish Event</button>
+            </form>
+        </article>
+    </section>
+
+    <!-- Paginated List -->
+    <section>
+        <h5>Managed Events</h5>
+        <table>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Date</th>
+                    <th>Featured</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for event in events %}
+                <tr>
+                    <td>{{ event.name }}</td>
+                    <td>{{ event.date.strftime('%Y-%m-%d') }}</td>
+                    <td>{{ "✅" if event.is_featured else "❌" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <!-- Simple Pagination -->
+        <div class="grid">
+            <a href="/dashboard?page={{ page - 1 }}" role="button" class="outline {% if page <= 1 %}disabled{% endif %}">Previous</a>
+            <a href="/dashboard?page={{ page + 1 }}" role="button" class="outline">Next</a>
+        </div>
+    </section>
+</div>
+{% endblock %}
