@@ -1,20 +1,161 @@
 {% extends "base.html" %}
+
+{% block title %}Register - EventBoard{% endblock %}
+
+{% block extra_css %}
+<style>
+    .register-container {
+        max-width: 450px;
+        margin: 3rem auto;
+    }
+
+    .register-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        padding: 2.5rem;
+    }
+
+    .register-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .register-header h2 {
+        color: #1F2937;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .register-header p {
+        color: #6B7280;
+        margin: 0;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        border: 1px solid #D1D5DB;
+        transition: all 0.3s;
+    }
+
+    .form-control:focus {
+        border-color: #4F46E5;
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    .btn-register {
+        width: 100%;
+        padding: 0.75rem;
+        border-radius: 8px;
+        font-weight: 600;
+        margin-top: 1rem;
+    }
+
+    .form-text {
+        color: #6B7280;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+
+    .login-link {
+        text-align: center;
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #E5E7EB;
+    }
+
+    .feature-list {
+        background: #F9FAFB;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .feature-list ul {
+        margin: 0;
+        padding-left: 1.5rem;
+        color: #6B7280;
+    }
+
+    .feature-list li {
+        margin-bottom: 0.5rem;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<article style="max-width: 400px; margin: auto;">
-    <header>
-        <h2>Create Account</h2>
-    </header>
-    <form action="/register" method="POST">
-        <label for="username">Choose Username</label>
-        <input type="text" id="username" name="username" placeholder="e.g. john_doe" required>
-        
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" placeholder="Min. 8 characters" required>
-        
-        <button type="submit">Register</button>
-    </form>
-    <footer>
-        <small>Already have an account? <a href="/login">Login here</a></small>
-    </footer>
-</article>
+<div class="register-container">
+    <div class="register-card">
+        <div class="register-header">
+            <div class="mb-3">
+                <i class="bi bi-person-plus-fill text-primary" style="font-size: 3rem;"></i>
+            </div>
+            <h2>Create Account</h2>
+            <p>Join EventBoard and start discovering events</p>
+        </div>
+
+        <div class="feature-list">
+            <ul class="mb-0">
+                <li><i class="bi bi-check-circle-fill text-success"></i> Discover amazing events</li>
+                <li><i class="bi bi-check-circle-fill text-success"></i> Share with friends</li>
+                <li><i class="bi bi-check-circle-fill text-success"></i> Create your own events</li>
+            </ul>
+        </div>
+
+        <form action="/register" method="POST">
+            <div class="mb-3">
+                <label for="username" class="form-label">
+                    <i class="bi bi-person"></i> Username
+                </label>
+                <input type="text"
+                       class="form-control"
+                       id="username"
+                       name="username"
+                       placeholder="Choose a username (e.g., john_doe)"
+                       required
+                       autocomplete="username"
+                       pattern="[a-zA-Z0-9_]+"
+                       title="Username can only contain letters, numbers, and underscores">
+                <div class="form-text">
+                    <i class="bi bi-info-circle"></i> Only letters, numbers, and underscores allowed
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">
+                    <i class="bi bi-lock"></i> Password
+                </label>
+                <input type="password"
+                       class="form-control"
+                       id="password"
+                       name="password"
+                       placeholder="Create a strong password"
+                       required
+                       autocomplete="new-password"
+                       minlength="8">
+                <div class="form-text">
+                    <i class="bi bi-shield-check"></i> Minimum 8 characters required
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-register">
+                <i class="bi bi-person-check"></i> Create Account
+            </button>
+        </form>
+
+        <div class="login-link">
+            <p class="text-muted mb-0">
+                Already have an account?
+                <a href="/login" class="text-decoration-none fw-bold">Sign in here</a>
+            </p>
+        </div>
+    </div>
+</div>
 {% endblock %}
