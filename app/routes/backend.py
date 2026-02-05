@@ -10,7 +10,8 @@ from database import get_db
 import models
 from schemas import EventCreate  # Correctly imported
 from utils import get_current_user, sanitize_input
-from main_config import templates
+from config import templates
+
 from config import settings
 
 router = APIRouter()
@@ -59,6 +60,11 @@ async def create_event(
     # 1. Image Handling
     final_image_url = None
     if image_file and image_file.filename:
+
+        # Ensure uploads directory exists
+        upload_dir = os.path.join("static", "uploads")
+        os.makedirs(upload_dir, exist_ok=True)
+
         # File Size Validation (10MB)
         image_file.file.seek(0, 2)
         file_size = image_file.file.tell()
@@ -125,8 +131,6 @@ async def create_event(
     return RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
 
 
-# routes/backend.py
-
 @router.post("/events/{event_id}/delete")
 async def delete_event(event_id: int, request: Request, db: Session = Depends(get_db)):
     current_user = await get_current_user(request, db)
@@ -181,6 +185,9 @@ async def edit_event(
             old_path = os.path.join(settings.UPLOAD_DIR, old_filename)
             if os.path.exists(old_path):
                 os.remove(old_path)
+
+
+        os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
 
         # Save new file
         file_ext = os.path.splitext(image_file.filename)[1]

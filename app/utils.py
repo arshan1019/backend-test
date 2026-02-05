@@ -1,6 +1,8 @@
 import re
 from fastapi import Request
 from sqlalchemy.orm import Session
+from alembic import command
+from alembic.config import Config
 import models
 
 
@@ -16,3 +18,15 @@ def sanitize_input(text: str) -> str:
         return ""
     clean = re.compile('<.*?>')
     return re.sub(clean, '', text).strip()
+
+
+
+def run_migrations(alembic_ini_path: str = "alembic.ini"):
+    """
+    Run Alembic migrations programmatically to upgrade the database
+    to the latest version.
+    
+    :param alembic_ini_path: Path to alembic.ini file
+    """
+    alembic_cfg = Config(alembic_ini_path)
+    command.upgrade(alembic_cfg, "head")

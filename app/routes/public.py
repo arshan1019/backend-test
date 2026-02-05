@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from database import get_db
 import models
 from utils import get_current_user
-from main_config import templates  # defined in main.py
+from config import templates
 
 router = APIRouter()
 

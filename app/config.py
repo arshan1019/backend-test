@@ -1,6 +1,6 @@
-# config.py
 from pydantic_settings import BaseSettings, SettingsConfigDict
-
+from fastapi.templating import Jinja2Templates
+import os
 
 class Settings(BaseSettings):
     SECRET_KEY: str
@@ -13,3 +13,9 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
+# Create static/uploads directory if it doesn't exist
+os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
+
+# Shared templates instance
+templates = Jinja2Templates(directory="templates")

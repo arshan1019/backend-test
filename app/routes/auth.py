@@ -5,7 +5,7 @@ from database import get_db
 import models
 import auth
 
-from main_config import templates
+from config import templates
 
 router = APIRouter()
 
