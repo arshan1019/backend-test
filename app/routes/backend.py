@@ -87,10 +87,10 @@ async def create_event(
             shutil.copyfileobj(image_file.file, buffer)
 
         # Generate URL dynamically based on UPLOAD_DIR
-    relative_path = os.path.relpath(settings.UPLOAD_DIR, "static")  # e.g., "uploads"
-    final_image_url = (
-        f"{str(request.base_url).rstrip('/')}/static/{relative_path}/{unique_filename}"
-    )
+        relative_path = os.path.relpath(settings.UPLOAD_DIR, "static")  # e.g., "uploads"
+        final_image_url = (
+            f"{str(request.base_url).rstrip('/')}/static/{relative_path}/{unique_filename}"
+        )
 
     # Schema Validation (Internal usage of Pydantic)
     try:
@@ -224,10 +224,10 @@ async def edit_event(
             shutil.copyfileobj(image_file.file, buffer)
 
         # Generate URL dynamically
-    relative_path = os.path.relpath(settings.UPLOAD_DIR, "static")
-    final_image_url = (
-        f"{str(request.base_url).rstrip('/')}/static/{relative_path}/{unique_filename}"
-    )
+        relative_path = os.path.relpath(settings.UPLOAD_DIR, "static")
+        final_image_url = (
+            f"{str(request.base_url).rstrip('/')}/static/{relative_path}/{unique_filename}"
+        )
 
     #  Sanitize and Validate
     event_dates = sorted([datetime.fromisoformat(d) for d in additional_dates])
