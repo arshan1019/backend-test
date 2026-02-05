@@ -75,3 +75,6 @@ logs/
 # Secrets / env
 .env
 .env.*.local
+
+static/uploads
+
