@@ -15,11 +15,12 @@ from config import templates
 from config import settings
 
 router = APIRouter()
-UPLOAD_DIR = "static/uploads"
 
 
 @router.get("/dashboard", response_class=HTMLResponse)
-async def dashboard(request: Request, db: Session = Depends(get_db), params: Params = Depends()):
+async def dashboard(
+    request: Request, db: Session = Depends(get_db), params: Params = Depends()
+):
     current_user = await get_current_user(request, db)
     if not current_user:
         return RedirectResponse(url="/login")
@@ -33,25 +34,28 @@ async def dashboard(request: Request, db: Session = Depends(get_db), params: Par
     query = db.query(models.Event).order_by(models.Event.id.desc())
     page_data = paginate(db, query, params=params)
 
-    return templates.TemplateResponse("dashboard.html", {
-        "request": request,
-        "events_page": page_data,
-        "user": current_user,
-        "error_message": error,
-        "success_message": success
-    })
+    return templates.TemplateResponse(
+        "dashboard.html",
+        {
+            "request": request,
+            "events_page": page_data,
+            "user": current_user,
+            "error_message": error,
+            "success_message": success,
+        },
+    )
 
 
 @router.post("/events")
 async def create_event(
-        request: Request,
-        name: str = Form(...),
-        description: str = Form(...),
-        additional_dates: List[str] = Form(...),
-        location: str = Form(...),
-        image_file: UploadFile = File(None),
-        is_featured: bool = Form(False),
-        db: Session = Depends(get_db)
+    request: Request,
+    name: str = Form(...),
+    description: str = Form(...),
+    additional_dates: List[str] = Form(...),
+    location: str = Form(...),
+    image_file: UploadFile = File(None),
+    is_featured: bool = Form(False),
+    db: Session = Depends(get_db),
 ):
     current_user = await get_current_user(request, db)
     if not current_user:
@@ -71,7 +75,9 @@ async def create_event(
         image_file.file.seek(0)
         if file_size > 10 * 1024 * 1024:
             request.session["error"] = "Error: Image file is too large (Max 10MB)."
-            return RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
+            return RedirectResponse(
+                url="/dashboard", status_code=status.HTTP_303_SEE_OTHER
+            )
 
         file_ext = os.path.splitext(image_file.filename)[1]
         unique_filename = f"{uuid.uuid4()}{file_ext}"
@@ -80,7 +86,11 @@ async def create_event(
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(image_file.file, buffer)
 
-        final_image_url = f"{str(request.base_url).rstrip('/')}/static/uploads/{unique_filename}"
+        # Generate URL dynamically based on UPLOAD_DIR
+    relative_path = os.path.relpath(settings.UPLOAD_DIR, "static")  # e.g., "uploads"
+    final_image_url = (
+        f"{str(request.base_url).rstrip('/')}/static/{relative_path}/{unique_filename}"
+    )
 
     # Schema Validation (Internal usage of Pydantic)
     try:
@@ -92,7 +102,7 @@ async def create_event(
             date=datetime.fromisoformat(additional_dates[0]),
             additional_dates=[datetime.fromisoformat(d) for d in additional_dates],
             is_featured=is_featured,
-            image_url=final_image_url
+            image_url=final_image_url,
         )
     except Exception as e:
         request.session["error"] = f"Validation Error: {str(e)}"
@@ -100,8 +110,16 @@ async def create_event(
 
     # Formatting and Past Date Check
     # Ensure 1st letter is uppercase
-    clean_name = event_data.name[0].upper() + event_data.name[1:] if event_data.name else "Untitled"
-    clean_location = event_data.location[0].upper() + event_data.location[1:] if event_data.location else ""
+    clean_name = (
+        event_data.name[0].upper() + event_data.name[1:]
+        if event_data.name
+        else "Untitled"
+    )
+    clean_location = (
+        event_data.location[0].upper() + event_data.location[1:]
+        if event_data.location
+        else ""
+    )
 
     # Sort dates to ensure the primary date is the earliest
     sorted_dates = sorted(event_data.additional_dates)
@@ -117,7 +135,7 @@ async def create_event(
         date=sorted_dates[0],
         image_url=event_data.image_url,
         is_featured=event_data.is_featured,
-        user_id=current_user.id
+        user_id=current_user.id,
     )
 
     # Add all dates to the relationship table
@@ -127,7 +145,9 @@ async def create_event(
     db.add(new_event)
     db.commit()
 
-    request.session["success"] = f"Success! '{clean_name}' created with {len(sorted_dates)} dates."
+    request.session["success"] = (
+        f"Success! '{clean_name}' created with {len(sorted_dates)} dates."
+    )
     return RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
 
 
@@ -137,7 +157,11 @@ async def delete_event(event_id: int, request: Request, db: Session = Depends(ge
     if not current_user:
         return RedirectResponse(url="/login", status_code=status.HTTP_303_SEE_OTHER)
 
-    event = db.query(models.Event).filter(models.Event.id == event_id, models.Event.user_id == current_user.id).first()
+    event = (
+        db.query(models.Event)
+        .filter(models.Event.id == event_id, models.Event.user_id == current_user.id)
+        .first()
+    )
     if not event:
         request.session["error"] = "Event not found or unauthorized."
         return RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
@@ -157,21 +181,25 @@ async def delete_event(event_id: int, request: Request, db: Session = Depends(ge
 
 @router.post("/events/{event_id}/edit")
 async def edit_event(
-        event_id: int,
-        request: Request,
-        name: str = Form(...),
-        description: str = Form(...),
-        additional_dates: List[str] = Form(...),
-        location: str = Form(...),
-        image_file: UploadFile = File(None),
-        is_featured: bool = Form(False),
-        db: Session = Depends(get_db)
+    event_id: int,
+    request: Request,
+    name: str = Form(...),
+    description: str = Form(...),
+    additional_dates: List[str] = Form(...),
+    location: str = Form(...),
+    image_file: UploadFile = File(None),
+    is_featured: bool = Form(False),
+    db: Session = Depends(get_db),
 ):
     current_user = await get_current_user(request, db)
     if not current_user:
         return RedirectResponse(url="/login", status_code=status.HTTP_303_SEE_OTHER)
 
-    event = db.query(models.Event).filter(models.Event.id == event_id, models.Event.user_id == current_user.id).first()
+    event = (
+        db.query(models.Event)
+        .filter(models.Event.id == event_id, models.Event.user_id == current_user.id)
+        .first()
+    )
     if not event:
         request.session["error"] = "Event not found."
         return RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
@@ -186,7 +214,6 @@ async def edit_event(
             if os.path.exists(old_path):
                 os.remove(old_path)
 
-
         os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
 
         # Save new file
@@ -195,7 +222,12 @@ async def edit_event(
         file_path = os.path.join(settings.UPLOAD_DIR, unique_filename)
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(image_file.file, buffer)
-        final_image_url = f"{str(request.base_url).rstrip('/')}/static/uploads/{unique_filename}"
+
+        # Generate URL dynamically
+    relative_path = os.path.relpath(settings.UPLOAD_DIR, "static")
+    final_image_url = (
+        f"{str(request.base_url).rstrip('/')}/static/{relative_path}/{unique_filename}"
+    )
 
     #  Sanitize and Validate
     event_dates = sorted([datetime.fromisoformat(d) for d in additional_dates])
