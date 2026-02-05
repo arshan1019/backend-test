@@ -5,7 +5,7 @@ This is a FastAPI application with session-based authentication, file uploads, a
 
 ---
 
-Stack: Python, FastAPI, SQLite, Alembic, Jinja2
+Stack: Python, FastAPI, SQLite, Alembic, Jinja2, SQL Alchemy for ORM
 
 ### LOCAL SETUP
 
