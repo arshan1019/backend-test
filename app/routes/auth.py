@@ -2,7 +2,9 @@ from fastapi import APIRouter, Depends, Request, Form, status
 from fastapi.responses import HTMLResponse, RedirectResponse
 from sqlalchemy.orm import Session
 from database import get_db
-import models, auth
+import models
+import auth
+
 from main_config import templates
 
 router = APIRouter()

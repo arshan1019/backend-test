@@ -1,14 +1,7 @@
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel
 from datetime import datetime
 from typing import List, Optional
-
-
-class UserOut(BaseModel):
-    id: int
-    username: str
-
-    class Config:
-        from_attributes = True
+from .user import UserOut  # Import the User schema for nesting
 
 
 class EventDateBase(BaseModel):
@@ -26,8 +19,8 @@ class EventCreate(BaseModel):
     name: str
     description: str
     location: str
-    date: datetime  # Main date
-    additional_dates: Optional[List[datetime]] = []  # Date list requirement
+    date: datetime  # Primary/Main date
+    additional_dates: Optional[List[datetime]] = []
     is_featured: bool = False
     image_url: Optional[str] = None
 
@@ -40,8 +33,8 @@ class EventOut(BaseModel):
     date: datetime
     is_featured: bool
     image_url: Optional[str]
-    owner: UserOut
-    dates: List[EventDateOut] = []
+    owner: UserOut  # Nested Pydantic model
+    dates: List[EventDateOut] = []  # Nested List of models
 
     class Config:
         from_attributes = True

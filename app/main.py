@@ -7,6 +7,8 @@ from fastapi_pagination import add_pagination
 import models
 from database import engine
 
+from config import settings
+
 # 1. Configuration that needs to be shared
 # We put templates here and import it in routers to avoid circular imports
 templates = Jinja2Templates(directory="templates")
@@ -21,11 +23,12 @@ sys.modules["main_config"] = m
 
 # 2. App Init
 models.Base.metadata.create_all(bind=engine)
-app = FastAPI()
+app = FastAPI(debug=settings.DEBUG)
 add_pagination(app)
 
-app.add_middleware(SessionMiddleware, secret_key="your-very-secret-key")
-os.makedirs("static/uploads", exist_ok=True)
+# use secret_key from settings
+app.add_middleware(SessionMiddleware, secret_key=settings.SECRET_KEY)
+os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # 3. Import and Register Routers
