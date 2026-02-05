@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     DATABASE_URL: str
     DEBUG: bool = False
     UPLOAD_DIR: str = "static/uploads"
+    SESSION_AGE: int = 3600
 
     # tell Pydantic to read from the .env file
     model_config = SettingsConfigDict(env_file=".env")

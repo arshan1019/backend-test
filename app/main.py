@@ -14,7 +14,7 @@ from routes import public, auth, backend
 
 app = FastAPI(debug=settings.DEBUG)
 add_pagination(app)
-app.add_middleware(SessionMiddleware, secret_key=settings.SECRET_KEY)
+app.add_middleware(SessionMiddleware, secret_key=settings.SECRET_KEY, max_age=settings.SESSION_AGE, same_site="lax")
 
 # Ensure uploads folder exists
 os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
