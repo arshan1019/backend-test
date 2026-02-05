@@ -1,12 +1,13 @@
 
-```markdown
 # FastAPI App
 
 This is a FastAPI application with session-based authentication, file uploads, and database migrations handled by Alembic. Database used is SQLite for simplicity.
 
 ---
 
-## **Local Setup**
+Stack: Python, FastAPI, SQLite, Alembic, Jinja2
+
+### LOCAL SETUP
 
 Follow these steps to run the app locally:
 
@@ -57,4 +58,3 @@ The app will be available at http://127.0.0.1:8000.
 Alembic migrations will run automatically on startup.
 
 Uploaded files will be saved in `static/uploads`.
-```
