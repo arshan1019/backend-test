@@ -1,5 +1,8 @@
+import json
 import math
 from datetime import datetime
+
+from pydantic import Json
 from fastapi import APIRouter, Depends, Request, HTTPException
 from fastapi.params import Query
 from fastapi.responses import HTMLResponse
@@ -8,6 +11,7 @@ from database import get_db
 import models
 from utils import get_current_user
 from config import templates
+from fastapi import HTTPException
 
 router = APIRouter()
 
@@ -43,3 +47,25 @@ async def event_detail(event_id: int, request: Request, db: Session = Depends(ge
     share_text = f"I will attend to {event.name} @ {event.date.strftime('%Y-%m-%d')}"
     return templates.TemplateResponse("detail.html", {"request": request, "event": event, "share_text": share_text,
                                                       "user": current_user})
+
+
+@router.get("/items")
+def items(minprice: float | None = None, maxprice: float | None = None):
+
+    if minprice is not None and maxprice is not None and minprice > maxprice:
+        raise HTTPException(status_code=400, detail="minprice cannot be greater than maxprice")
+    
+    file_path = r"..\app\test.json"
+    with open(file_path) as f:
+        d = json.load(f)
+        print(d)
+        
+        max=0
+        max_prod=""
+        for product in d:
+
+            if product["price"] > max:
+                max_prod = product["name"]
+                max = product["price"]
+
+        return max_prod
